@@ -123,13 +123,13 @@ const main = async () => {
   nextProcess = runNpmScript('dev:next');
   watchChildExit(nextProcess, 'next');
 
-  viteProcess = runNpmScript('dev:spa');
-  watchChildExit(viteProcess, 'vite');
+  // Skip Vite SPA in v0 sandbox to reduce memory usage
+  // viteProcess = runNpmScript('dev:spa');
+  // watchChildExit(viteProcess, 'vite');
   runNextBackgroundTasks();
 
   await Promise.race([
     new Promise((resolve) => nextProcess?.once('exit', resolve)),
-    new Promise((resolve) => viteProcess?.once('exit', resolve)),
   ]);
 };
 
