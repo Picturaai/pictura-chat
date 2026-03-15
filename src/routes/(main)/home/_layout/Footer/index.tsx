@@ -1,17 +1,12 @@
 'use client';
 
-import { SOCIAL_URL } from '@lobechat/business-const';
 import { useAnalytics } from '@lobehub/analytics/react';
 import { type MenuProps } from '@lobehub/ui';
 import { ActionIcon, DropdownMenu, Flexbox, Icon } from '@lobehub/ui';
-import { DiscordIcon } from '@lobehub/ui/icons';
 import {
-  Book,
   CircleHelp,
-  Feather,
   FileClockIcon,
   FlaskConical,
-  Github,
   Rocket,
   Settings2,
 } from 'lucide-react';
@@ -21,11 +16,9 @@ import { Link } from 'react-router-dom';
 
 import ChangelogModal from '@/components/ChangelogModal';
 import HighlightNotification from '@/components/HighlightNotification';
-import { DOCUMENTS_REFER_URL, GITHUB } from '@/const/url';
-import { useFeedbackModal } from '@/hooks/useFeedbackModal';
 import { useGlobalStore } from '@/store/global';
 import { systemStatusSelectors } from '@/store/global/selectors/systemStatus';
-import { featureFlagsSelectors, useServerConfigStore } from '@/store/serverConfig';
+import { useServerConfigStore } from '@/store/serverConfig';
 import { useUserStore } from '@/store/user';
 import { userGeneralSettingsSelectors } from '@/store/user/slices/settings/selectors';
 
@@ -40,7 +33,6 @@ const PRODUCT_HUNT_NOTIFICATION = {
 const Footer = memo(() => {
   const { t } = useTranslation('common');
   const { analytics } = useAnalytics();
-  const { hideGitHub } = useServerConfigStore(featureFlagsSelectors);
   const isDevMode = useUserStore((s) => userGeneralSettingsSelectors.config(s).isDevMode);
   const [shouldLoadChangelog, setShouldLoadChangelog] = useState(false);
   const [isChangelogModalOpen, setIsChangelogModalOpen] = useState(false);
@@ -77,8 +69,6 @@ const Footer = memo(() => {
     }
   }, [isWithinTimeWindow, isNotificationRead, trackProductHuntEvent]);
 
-  const { open: openFeedbackModal } = useFeedbackModal();
-
   const handleOpenChangelogModal = () => {
     setShouldLoadChangelog(true);
     setIsChangelogModalOpen(true);
@@ -86,10 +76,6 @@ const Footer = memo(() => {
 
   const handleCloseChangelogModal = () => {
     setIsChangelogModalOpen(false);
-  };
-
-  const handleOpenFeedbackModal = () => {
-    openFeedbackModal();
   };
 
   const handleOpenProductHuntCard = () => {
@@ -130,51 +116,11 @@ const Footer = memo(() => {
         type: 'divider' as const,
       },
       {
-        icon: <Icon icon={Book} />,
-        key: 'docs',
-        label: (
-          <a href={DOCUMENTS_REFER_URL} rel="noopener noreferrer" target="_blank">
-            {t('userPanel.docs')}
-          </a>
-        ),
-      },
-      {
-        icon: <Icon icon={Feather} />,
-        key: 'feedback',
-        label: t('userPanel.feedback'),
-        onClick: handleOpenFeedbackModal,
-      },
-      {
-        icon: <Icon icon={DiscordIcon} />,
-        key: 'discord',
-        label: (
-          <a href={SOCIAL_URL.discord} rel="noopener noreferrer" target="_blank">
-            {t('userPanel.discord')}
-          </a>
-        ),
-      },
-      {
-        type: 'divider',
-      },
-      {
         icon: <Icon icon={FileClockIcon} />,
         key: 'changelog',
         label: t('changelog'),
         onClick: handleOpenChangelogModal,
       },
-      ...(!hideGitHub
-        ? [
-            {
-              icon: <Icon icon={Github} />,
-              key: 'github',
-              label: (
-                <a href={GITHUB} rel="noopener noreferrer" target="_blank">
-                  GitHub
-                </a>
-              ),
-            },
-          ]
-        : []),
       ...(isDevMode
         ? [
             {
@@ -195,7 +141,7 @@ const Footer = memo(() => {
           ]
         : []),
     ],
-    [t, isWithinTimeWindow, hideGitHub, isDevMode],
+    [t, isWithinTimeWindow, isDevMode],
   );
 
   return (
